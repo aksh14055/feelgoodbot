@@ -2,7 +2,4 @@ flask
 flask-cors
 requests
 python-dotenv
-gunicorn
 textblob
-
-REACT_APP_API_URL=https://feelgoodbot.onrender.com
