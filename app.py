@@ -4,10 +4,11 @@ import requests, os
 from dotenv import load_dotenv
 from textblob import TextBlob
 
-# Load environment variables
 load_dotenv()
 app = Flask(__name__)
-CORS(app)
+
+# ✅ Fix CORS for both Vercel + local testing
+CORS(app, resources={r"/*": {"origins": ["https://feelgoodbot.vercel.app", "http://localhost:3000"]}})
 
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 
@@ -23,12 +24,10 @@ def chat():
     if not API_KEY:
         return jsonify({"error": "API key not set"}), 500
 
-    # Get the last user message
     user_msg = next((m["content"] for m in reversed(messages) if m["role"] == "user"), "")
     lower_msg = user_msg.lower()
     polarity = TextBlob(user_msg).sentiment.polarity
 
-    # Mood Detection: keywords + fallback on sentiment
     if "broken" in lower_msg or "hopeless" in lower_msg:
         mood = "😭"
     elif any(w in lower_msg for w in ["sad", "depressed", "worthless", "lonely", "tired"]):
@@ -50,7 +49,6 @@ def chat():
     else:
         mood = "🟢"
 
-    # Customize assistant tone
     system_prompt = {
         "role": "system",
         "content": (
@@ -81,8 +79,6 @@ def chat():
         print("❌ Error in chat API call:", e)
         return jsonify({"error": str(e)}), 500
 
-# ✅ Updated for deployment platforms like Render
 if __name__ == "__main__":
     print("🚀 Starting Flask App...")
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
