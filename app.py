@@ -7,8 +7,8 @@ from textblob import TextBlob
 load_dotenv()
 app = Flask(__name__)
 
-# ✅ Fix CORS for both Vercel + local testing
-CORS(app, origins=[https://feelgoodbot-at9eujssa-akshats-projects-6dcad02c.vercel.app])
+# ✅ Enable CORS: allow your frontend domain or '*' for testing
+CORS(app, origins=["https://feelgoodbot.vercel.app", "http://localhost:3000"])
 
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 
@@ -24,10 +24,12 @@ def chat():
     if not API_KEY:
         return jsonify({"error": "API key not set"}), 500
 
+    # Grab the last user message
     user_msg = next((m["content"] for m in reversed(messages) if m["role"] == "user"), "")
     lower_msg = user_msg.lower()
     polarity = TextBlob(user_msg).sentiment.polarity
 
+    # Mood logic
     if "broken" in lower_msg or "hopeless" in lower_msg:
         mood = "😭"
     elif any(w in lower_msg for w in ["sad", "depressed", "worthless", "lonely", "tired"]):
@@ -81,4 +83,4 @@ def chat():
 
 if __name__ == "__main__":
     print("🚀 Starting Flask App...")
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
