@@ -59,12 +59,12 @@ function App() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/chat`, {
+      const res = await fetch(`https://feelgoodbot-backend.onrender.com/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: newMessages })
       });
-      
+
       const data = await res.json();
       if (data.reply) {
         const updatedMessages = [...newMessages];
