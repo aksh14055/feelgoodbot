@@ -7,7 +7,7 @@ from textblob import TextBlob
 # Load environment variables
 load_dotenv()
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://feelgoodbot.vercel.app"])
 
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 
