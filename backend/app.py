@@ -4,6 +4,7 @@ import requests, os
 from dotenv import load_dotenv
 from textblob import TextBlob
 
+# Load environment variables
 load_dotenv()
 app = Flask(__name__)
 CORS(app)
@@ -80,6 +81,8 @@ def chat():
         print("❌ Error in chat API call:", e)
         return jsonify({"error": str(e)}), 500
 
+# ✅ Updated for deployment platforms like Render
 if __name__ == "__main__":
     print("🚀 Starting Flask App...")
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
