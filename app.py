@@ -8,7 +8,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # ✅ Fix CORS for both Vercel + local testing
-CORS(app, resources={r"/*": {"origins": ["https://feelgoodbot.vercel.app", "http://localhost:3000"]}})
+CORS(app, origins=[https://feelgoodbot-at9eujssa-akshats-projects-6dcad02c.vercel.app])
 
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 
