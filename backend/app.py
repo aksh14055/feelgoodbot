@@ -7,8 +7,11 @@ from textblob import TextBlob
 load_dotenv()
 app = Flask(__name__)
 
-# ✅ Fix CORS for both Vercel + local testing
-CORS(app, resources={r"/*": {"origins": ["https://feelgoodbot.vercel.app", "http://localhost:3000"]}})
+# ✅ Enable CORS for frontend domains
+CORS(app, origins=[
+    "https://feelgoodbot.vercel.app",
+    "https://feelgoodbot-at9eujssa-akshats-projects-6dcad02c.vercel.app"
+])
 
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 
@@ -81,4 +84,4 @@ def chat():
 
 if __name__ == "__main__":
     print("🚀 Starting Flask App...")
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)

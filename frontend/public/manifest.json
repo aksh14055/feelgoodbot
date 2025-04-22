@@ -1,10 +1,9 @@
 {
-  "short_name": "FeelGoodBot",
-  "name": "FeelGoodBot Chat App",
+  "short_name": "FeelGood",
+  "name": "FeelGoodBot",
+  "icons": [],
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#111827",
-  "description": "A kind AI buddy for emotional well-being.",
-  "theme_color": "#4facfe",
-  "icons": []
+  "theme_color": "#111827",
+  "background_color": "#111827"
 }

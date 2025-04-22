@@ -24,23 +24,6 @@ function App() {
   const [copingOpen, setCopingOpen] = useState(false);
   const chatRef = useRef(null);
 
-  const getMoodStats = () => {
-    const userMessages = messages.filter(m => m.role === 'user');
-    const allMoods = ['😭', '🔴', '😠', '😐', '🟡', '🟢', '😎'];
-    const stats = Object.fromEntries(allMoods.map(m => [m, 0]));
-    userMessages.forEach(m => {
-      if (m.mood && stats[m.mood] !== undefined) {
-        stats[m.mood]++;
-      }
-    });
-    const total = userMessages.length;
-    const avgMood = Object.entries(stats).reduce(
-      (acc, [mood, count]) => (count > acc.count ? { mood, count } : acc),
-      { mood: '🟡', count: 0 }
-    );
-    return { ...stats, total, average: avgMood.count > 0 ? avgMood.mood : '🟡' };
-  };
-
   const moodSuggestions = {
     '😭': "Take a deep breath and know it's okay to feel this way. Want to try a breathing exercise?",
     '🔴': "Try stepping away for a few minutes and doing something calming.",
@@ -59,7 +42,7 @@ function App() {
     setLoading(true);
 
     try {
-      const res = await fetch(`https://feelgoodbot-backend.onrender.com/chat`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: newMessages })
@@ -75,12 +58,13 @@ function App() {
         const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         setMoodLog(prev => [...prev, { time: timestamp, mood }]);
         setSuggestion(moodSuggestions[mood] || '');
+
         if (['😭', '🔴', '😠', '😐'].includes(mood)) {
           setCopingOpen(true);
         }
       }
     } catch {
-      alert('Something went wrong.');
+      alert('Something went wrong connecting to the server.');
     } finally {
       setLoading(false);
     }
@@ -93,6 +77,23 @@ function App() {
   useEffect(() => {
     chatRef.current?.scrollTo(0, chatRef.current.scrollHeight);
   }, [messages]);
+
+  const getMoodStats = () => {
+    const userMessages = messages.filter(m => m.role === 'user');
+    const allMoods = ['😭', '🔴', '😠', '😐', '🟡', '🟢', '😎'];
+    const stats = Object.fromEntries(allMoods.map(m => [m, 0]));
+    userMessages.forEach(m => {
+      if (m.mood && stats[m.mood] !== undefined) {
+        stats[m.mood]++;
+      }
+    });
+    const total = userMessages.length;
+    const avgMood = Object.entries(stats).reduce(
+      (acc, [mood, count]) => (count > acc.count ? { mood, count } : acc),
+      { mood: '🟡', count: 0 }
+    );
+    return { ...stats, total, average: avgMood.count > 0 ? avgMood.mood : '🟡' };
+  };
 
   const stats = getMoodStats();
 
@@ -109,10 +110,12 @@ function App() {
 
   return (
     <div className="chat-wrapper">
+      {/* Toggle Coping Panel */}
       <button className="toggle-coping" onClick={() => setCopingOpen(!copingOpen)}>
         {copingOpen ? '❌ Close Tools' : '🧘 Coping Tools'}
       </button>
 
+      {/* Slide-out Panel */}
       <div className={`coping-slide-wrapper ${copingOpen ? 'open' : ''}`}>
         <h3>🧘 Coping Toolkit</h3>
         <ul>
